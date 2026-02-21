@@ -48,3 +48,5 @@ I'm a passionate developer who loves building web applications and exploring the
 <p align="left">
 <a href="https://github.com/techyfatcat" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/github.svg" alt="techyfatcat" height="30" width="40" /></a>
 </p>
+
+![Profile view counter on GitHub](https://komarev.com/ghpvc/?username=techyfatcat)
