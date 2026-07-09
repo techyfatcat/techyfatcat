@@ -3,103 +3,161 @@ const fs = require("fs");
 const WIDTH = 1200;
 const HEIGHT = 400;
 
-const chars =
-  "アイウエオカキクケコサシスセソABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+=<>";
+const terminal = `
+$ booting...
 
-const COLS = 70;
-const FONT_SIZE = 16;
-const COL_WIDTH = WIDTH / COLS;
+Welcome to......
+techfatcat's profile......
+loading contributions.......
 
-function rand(min, max) {
-  return Math.random() * (max - min) + min;
-}
+Entering contribution view...
 
-function pick() {
-  return chars[Math.floor(Math.random() * chars.length)];
-}
+[████████████████████] 100%
+`;
 
 let svg = `<?xml version="1.0" encoding="UTF-8"?>
 
 <svg
 xmlns="http://www.w3.org/2000/svg"
+viewBox="0 0 ${WIDTH} ${HEIGHT}"
 width="${WIDTH}"
-height="${HEIGHT}"
-viewBox="0 0 ${WIDTH} ${HEIGHT}">
+height="${HEIGHT}">
 
-<defs>
+<style>
 
-<filter id="glow">
+@keyframes showTerminal{
+0%,40%{opacity:1;}
+45%,95%{opacity:0;}
+100%{opacity:1;}
+}
 
-<feGaussianBlur stdDeviation="2" result="blur"/>
+@keyframes showHeatmap{
+0%,40%{opacity:0;}
+45%,95%{opacity:1;}
+100%{opacity:0;}
+}
 
-<feMerge>
-<feMergeNode in="blur"/>
-<feMergeNode in="SourceGraphic"/>
-</feMerge>
+@keyframes blink{
+50%{opacity:0;}
+}
 
-</filter>
+text{
+font-family:Consolas,monospace;
+}
 
-</defs>
+.terminal{
+animation:showTerminal 8s linear infinite;
+}
 
-<rect width="100%" height="100%" fill="black"/>
-`;
+.heatmap{
+animation:showHeatmap 8s linear infinite;
+}
 
-for (let c = 0; c < COLS; c++) {
-  const x = c * COL_WIDTH + 5;
+.cursor{
+animation:blink .8s infinite;
+}
 
-  const duration = rand(5, 12).toFixed(2);
+</style>
 
-  const delay = (-rand(0, duration)).toFixed(2);
+<rect width="100%" height="100%" fill="#050505"/>
 
-  svg += `
-<g>
+<g class="terminal">
 
-<animateTransform
-attributeName="transform"
-type="translate"
-values="0,-450;0,450"
-dur="${duration}s"
-begin="${delay}s"
-repeatCount="indefinite"/>
+<rect
+x="80"
+y="40"
+width="1040"
+height="320"
+rx="10"
+fill="#111"
+stroke="#00ff41"
+stroke-width="2"/>
 
-`;
-
-  for (let r = 0; r < 35; r++) {
-    const y = r * FONT_SIZE + 10;
-
-    let color = "#00aa33";
-
-    if (r === 0)
-      color = "#ffffff";
-    else if (r < 4)
-      color = "#88ff88";
-    else if (r < 10)
-      color = "#00ff66";
-
-    svg += `
 <text
+x="120"
+y="90"
+fill="#00ff41"
+font-size="24"
+xml:space="preserve">
+
+<tspan x="120" dy="0">$ booting...</tspan>
+
+<tspan x="120" dy="40"></tspan>
+
+<tspan x="120" dy="40">Welcome to......</tspan>
+<tspan x="120" dy="40">techfatcat's profile......</tspan>
+<tspan x="120" dy="40">loading contributions.......</tspan>
+
+<tspan x="120" dy="40"></tspan>
+
+<tspan x="120" dy="40">Entering contribution view...</tspan>
+
+<tspan x="120" dy="50">[████████████████████] 100%</tspan>
+
+<tspan
+class="cursor"
+x="120"
+dy="40">█</tspan>
+
+</text>
+
+</g>
+
+<g class="heatmap">
+
+<rect
+x="180"
+y="70"
+width="840"
+height="260"
+rx="10"
+fill="#0d1117"
+stroke="#30363d"/>
+
+`;
+
+const rows = 7;
+const cols = 53;
+
+const colors = [
+"#161b22",
+"#0e4429",
+"#006d32",
+"#26a641",
+"#39d353"
+];
+
+for(let r=0;r<rows;r++){
+
+    for(let c=0;c<cols;c++){
+
+        const x = 205 + c*15;
+        const y = 95 + r*30;
+
+        const color = colors[Math.floor(Math.random()*colors.length)];
+
+        svg += `
+<rect
 x="${x}"
 y="${y}"
-font-size="${FONT_SIZE}"
-font-family="monospace"
-fill="${color}"
-filter="url(#glow)">
-${pick()}
-</text>
-`;
-  }
+width="11"
+height="11"
+rx="2"
+fill="${color}"/>`;
 
-  svg += `
-</g>
-`;
+    }
+
 }
 
 svg += `
+
+</g>
+
 </svg>
 `;
 
-fs.mkdirSync("output", { recursive: true });
+fs.mkdirSync("output",{recursive:true});
 
-fs.writeFileSync("output/matrix.svg", svg);
+fs.writeFileSync("output/matrix.svg",svg);
 
-console.log("Matrix Rain Generated");
+console.log("Terminal Heatmap Generated");
