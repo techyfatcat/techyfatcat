@@ -26,3 +26,9 @@ I'm a passionate developer who loves building web applications and exploring the
 <p align="center">
   <img src="https://ghchart.rshah.org/f39c12/techyfatcat" />
 </p>
+
+<p align="center">
+    <img
+        src="https://raw.githubusercontent.com/techyfatcat/techyfatcat/output/matrix.svg"
+        width="100%">
+</p>
