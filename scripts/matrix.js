@@ -3,94 +3,98 @@ const fs = require("fs");
 const WIDTH = 1200;
 const HEIGHT = 400;
 
-const COLS = 70;
-const ROWS = 28;
-
 const chars =
   "アイウエオカキクケコサシスセソABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*+=<>";
 
-function randomChar() {
+const COLS = 70;
+const FONT_SIZE = 16;
+const COL_WIDTH = WIDTH / COLS;
+
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function pick() {
   return chars[Math.floor(Math.random() * chars.length)];
 }
 
-let text = "";
+let svg = `<?xml version="1.0" encoding="UTF-8"?>
 
-for (let c = 0; c < COLS; c++) {
-  const x = c * 17 + 10;
-
-  const duration = (Math.random() * 6 + 6).toFixed(2);
-
-  const delay = (-Math.random() * duration).toFixed(2);
-
-  text += `<g>
-      <animateTransform
-          attributeName="transform"
-          type="translate"
-          from="0,-420"
-          to="0,420"
-          dur="${duration}s"
-          begin="${delay}s"
-          repeatCount="indefinite"/>\n`;
-
-  for (let r = 0; r < ROWS; r++) {
-    const y = r * 18;
-
-    const opacity = Math.max(0.08, 1 - r / ROWS);
-
-    text += `
-      <text
-          x="${x}"
-          y="${y}"
-          fill="#00ff66"
-          opacity="${opacity}"
-          font-size="16"
-          font-family="monospace"
-          filter="url(#glow)">
-          ${randomChar()}
-      </text>`;
-  }
-
-  text += `</g>`;
-}
-
-const svg = `
 <svg
 xmlns="http://www.w3.org/2000/svg"
-viewBox="0 0 ${WIDTH} ${HEIGHT}"
 width="${WIDTH}"
-height="${HEIGHT}">
+height="${HEIGHT}"
+viewBox="0 0 ${WIDTH} ${HEIGHT}">
 
 <defs>
 
 <filter id="glow">
 
-<feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+<feGaussianBlur stdDeviation="2" result="blur"/>
 
 <feMerge>
-
-<feMergeNode in="coloredBlur"/>
-
+<feMergeNode in="blur"/>
 <feMergeNode in="SourceGraphic"/>
-
 </feMerge>
 
 </filter>
 
 </defs>
 
-<rect
-width="100%"
-height="100%"
-fill="#000000"/>
+<rect width="100%" height="100%" fill="black"/>
+`;
 
-${text}
+for (let c = 0; c < COLS; c++) {
+  const x = c * COL_WIDTH + 5;
 
-<rect
-width="100%"
-height="100%"
-fill="url(#fade)"
-opacity=".08"/>
+  const duration = rand(5, 12).toFixed(2);
 
+  const delay = (-rand(0, duration)).toFixed(2);
+
+  svg += `
+<g>
+
+<animateTransform
+attributeName="transform"
+type="translate"
+values="0,-450;0,450"
+dur="${duration}s"
+begin="${delay}s"
+repeatCount="indefinite"/>
+
+`;
+
+  for (let r = 0; r < 35; r++) {
+    const y = r * FONT_SIZE + 10;
+
+    let color = "#00aa33";
+
+    if (r === 0)
+      color = "#ffffff";
+    else if (r < 4)
+      color = "#88ff88";
+    else if (r < 10)
+      color = "#00ff66";
+
+    svg += `
+<text
+x="${x}"
+y="${y}"
+font-size="${FONT_SIZE}"
+font-family="monospace"
+fill="${color}"
+filter="url(#glow)">
+${pick()}
+</text>
+`;
+  }
+
+  svg += `
+</g>
+`;
+}
+
+svg += `
 </svg>
 `;
 
