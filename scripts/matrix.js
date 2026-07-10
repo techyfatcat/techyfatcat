@@ -1,155 +1,163 @@
 const fs = require("fs");
 
-const USERNAME = "techyfatcat";
-
-const TOKEN = process.env.GH_TOKEN;
-
-if (!TOKEN) {
-    throw new Error("GH_TOKEN secret not found.");
-}
-
 const WIDTH = 1200;
 const HEIGHT = 400;
 
-const GRAPHQL_URL = "https://api.github.com/graphql";
+const terminal = `
+$ booting...
 
-const QUERY = `
-query($login:String!){
+Welcome to......
+techfatcat's profile.....
 
-  user(login:$login){
 
-    repositories{
-      totalCount
-    }
 
-    followers{
-      totalCount
-    }
+Entering contribution view...
 
-    contributionsCollection{
-
-      contributionCalendar{
-
-        totalContributions
-
-        months{
-          name
-          year
-          firstDay
-          totalWeeks
-        }
-
-        weeks{
-
-          contributionDays{
-
-            contributionCount
-
-            contributionLevel
-
-            date
-
-            weekday
-
-            color
-
-          }
-
-        }
-
-      }
-
-    }
-
-  }
-
-}
+[████████████████████] 100%
 `;
 
-async function githubQuery(){
+let svg = `<?xml version="1.0" encoding="UTF-8"?>
 
-    const response = await fetch(GRAPHQL_URL,{
-        method:"POST",
+<svg
+xmlns="http://www.w3.org/2000/svg"
+viewBox="0 0 ${WIDTH} ${HEIGHT}"
+width="${WIDTH}"
+height="${HEIGHT}">
 
-        headers:{
-            "Authorization":`Bearer ${TOKEN}`,
-            "Content-Type":"application/json"
-        },
+<style>
 
-        body:JSON.stringify({
+@keyframes showTerminal{
+0%,40%{opacity:1;}
+45%,95%{opacity:0;}
+100%{opacity:1;}
+}
 
-            query:QUERY,
+@keyframes showHeatmap{
+0%,40%{opacity:0;}
+45%,95%{opacity:1;}
+100%{opacity:0;}
+}
 
-            variables:{
-                login:USERNAME
-            }
+@keyframes blink{
+50%{opacity:0;}
+}
 
-        })
+text{
+font-family:Consolas,monospace;
+}
 
-    });
+.terminal{
+animation:showTerminal 8s linear infinite;
+}
 
-    if(!response.ok){
+.heatmap{
+animation:showHeatmap 8s linear infinite;
+}
 
-        throw new Error(
-            `GitHub API Error ${response.status}`
-        );
+.cursor{
+animation:blink .8s infinite;
+}
+
+</style>
+
+<rect width="100%" height="100%" fill="#050505"/>
+
+<g class="terminal">
+
+<rect
+x="80"
+y="40"
+width="1040"
+height="320"
+rx="10"
+fill="#111"
+stroke="#00ff41"
+stroke-width="2"/>
+
+<text
+x="120"
+y="90"
+fill="#00ff41"
+font-size="24"
+xml:space="preserve">
+
+<tspan x="120" dy="0">$ booting...</tspan>
+
+<tspan x="120" dy="40"></tspan>
+
+<tspan x="120" dy="40">Welcome to......</tspan>
+<tspan x="120" dy="40">techfatcat's profile.....</tspan>
+
+<tspan x="120" dy="40"></tspan>
+
+<tspan x="120" dy="40">Entering contribution view...</tspan>
+
+<tspan x="120" dy="50">[████████████████████] 100%</tspan>
+
+<tspan
+class="cursor"
+x="120"
+dy="40">█</tspan>
+
+</text>
+
+</g>
+
+<g class="heatmap">
+
+<rect
+x="180"
+y="70"
+width="840"
+height="260"
+rx="10"
+fill="#0d1117"
+stroke="#30363d"/>
+
+`;
+
+const rows = 7;
+const cols = 53;
+
+const colors = [
+"#161b22",
+"#0e4429",
+"#006d32",
+"#26a641",
+"#39d353"
+];
+
+for(let r=0;r<rows;r++){
+
+    for(let c=0;c<cols;c++){
+
+        const x = 205 + c*15;
+        const y = 95 + r*30;
+
+        const color = colors[Math.floor(Math.random()*colors.length)];
+
+        svg += `
+<rect
+x="${x}"
+y="${y}"
+width="11"
+height="11"
+rx="2"
+fill="${color}"/>`;
 
     }
 
-    const json = await response.json();
-
-    if(json.errors){
-
-        console.log(json.errors);
-
-        throw new Error("GraphQL query failed.");
-
-    }
-
-    return json.data.user;
-
 }
 
-async function main(){
+svg += `
 
-    console.log("Fetching GitHub data...");
+</g>
 
-    const user = await githubQuery();
+</svg>
+`;
 
-    const calendar =
-        user.contributionsCollection.contributionCalendar;
+fs.mkdirSync("output",{recursive:true});
 
-    console.log(
-        "Repositories:",
-        user.repositories.totalCount
-    );
+fs.writeFileSync("output/matrix.svg",svg);
 
-    console.log(
-        "Followers:",
-        user.followers.totalCount
-    );
-
-    console.log(
-        "Total Contributions:",
-        calendar.totalContributions
-    );
-
-    console.log(
-        "Months:",
-        calendar.months.length
-    );
-
-    console.log(
-        "Weeks:",
-        calendar.weeks.length
-    );
-
-}
-
-main().catch(err=>{
-
-    console.error(err);
-
-    process.exit(1);
-
-});
+console.log("Terminal Heatmap Generated");
