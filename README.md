@@ -10,10 +10,9 @@ I'm a passionate developer who loves building web applications and exploring the
 
 
 ## GitHub Trophies
-<p align="center">
-  <img src="https://trophy.ryglcloud.net/?username=techyfatcat&theme=radical&no-frame=true&no-bg=true&margin-w=4&cache_seconds=86400" alt="Hi, I am Aadit's GitHub Trophies" />
-</p>
-
+<div data-importer="stats" align="center">
+  <img src="https://raw.githubusercontent.com/techyfatcat/techyfatcat/trophy-output/trophy.svg?theme=dracula&column=-1&row=1&margin-w=8&margin-h=8&no-bg=false&no-frame=false&order=4" height="150" alt="trophy graph"  />
+</div>
 
 
 ##  Languages & Tools
